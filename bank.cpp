@@ -39,7 +39,7 @@ struct watq {
 
 
 int const infinity = 2147483647;			// 2**31 - 1
-int *idle, maxwait, minwait, now, totwait;
+int *idle, minidle, maxwait, minwait, now, totwait;
 
 
 int
@@ -108,7 +108,7 @@ addevnt(evnt *pevnt)
 		q = evnth;
 
 		while (q != (evnt *)0) {
-			if (q - ? time <= pevnt->time) {
+			if (q -> time <= pevnt->time) {
 				p = q;
 				q = q->link;
 			}
@@ -124,7 +124,7 @@ addevnt(evnt *pevnt)
 			}
 		}
 
-		if (q == evnt *)0){
+		if (q == (evnt *)0){
 		p->link = pevnt;
 		pevnt->link = (evnt *)0;
 }
@@ -206,7 +206,7 @@ init( int n,int m )
 	for (i = 0; i < n; ) {
 
 		pevnt = new evnt;
-		pevnt > time = pcust->entr;
+		pevnt -> time = pcust->entr;
 		pevnt->what = 1;
 		pevnt->whom = ++i;
 		pevnt->data = pcust->jtim;
@@ -260,7 +260,7 @@ readjobs( char *fname,int & n )
 		while (file.read((char *)&rec, sizeof(rec)) ) {
 
 			n++;
-			pcut = new cust;
+			pcust = new cust;
 			pcust->entr = rec.entr;
 			pcust->jtim = rec.jtim;
 
@@ -332,7 +332,7 @@ simul(int mode, int v, int n, int m)
 		}
 		else {
 			if (v) {
-				cout << " clerk" << setw(5) << whom << " is done with customer" << setw(5) << data ";";
+				cout << " clerk" << setw(5) << whom << " is done with customer" << setw(5) << data << ";";
 			}
 
 			if (watqh == (watq *)0) {
@@ -340,7 +340,7 @@ simul(int mode, int v, int n, int m)
 					cout << "to idle queue\n";
 				}
 
-				toidleq(whom);
+				toidlq(whom);
 			}
 			else {
 				if (v) {
@@ -359,9 +359,11 @@ stats( int n,int m)
 {
 	int i,maxidle,minidle,totidle;
 
+	idlq *p;																	// Seeing if this fixes p = idlqh 3 lines down
+
 	for (; idlqh != (idlq *)0; ) {
 
-		idle[idleqh->clrk - 1] += now - idlqh->time;
+		idle[idlqh->clrk - 1] += now - idlqh->time;
 		p = idlqh;
 		idlqh = idlqh->link;
 		delete p;
@@ -373,7 +375,7 @@ stats( int n,int m)
 			minidle = idle[i];
 		}
 
-		toidle += (unsigned int)idle[i];
+		totidle += (unsigned int)idle[i];
 
 		if (maxidle < idle[i]){
 			maxidle = idle[i];
@@ -382,10 +384,10 @@ stats( int n,int m)
 
 	cout << "minwait =" << setw(6) << minwait
 		<< " meanwait =" << setw(12) << setprecision(4)
-		<< (double)towait / (double)n << " maxwait =" << setw(6) << maxwait
+		<< (double)totwait / (double)n << " maxwait =" << setw(6) << maxwait
 		<< "\nminidle =" << setw(6) << minidle
 		<< " meanidle = " << setw(12) << setprecision(4)
-		<< (double)toidle / (double)m
+		<< (double)totidle / (double)m
 		<< " maxidle =" << setw(6) << maxidle << '\n';
 }
 
@@ -405,7 +407,7 @@ toclrk( int cusn,int jtim )
 	p->what = 2;
 	p->whom = clrk;
 	p->data = cusn;
-	idle[clrk - 1] += now->idlqh->time;
+	idle[clrk - 1] += now-idlqh->time;
 	q = idlqh;
 	idlqh = idlqh->link;
 	delete q;
@@ -431,9 +433,9 @@ toidlq( int clrk )
 		p = (idlq *)0;
 		q = idlqh;
 
-		while (q != (idlq *)0{
+		while (q != (idlq *)0){
 
-			if (idle[clrk - 1] <= idle[q->clrk1] + now - q->time) {
+			if (idle[clrk - 1] <= idle[q->clrk-1] + now - q->time) {
 				p = q;
 				q = q->link;
 			}
@@ -466,7 +468,7 @@ towatq( int mode,int cusn,int jtim )
 
 	if (watqt == (watq *)0) {
 		watqh = watqt = pwatq;
-		watqt->link = watq *)0;
+		watqt->link = (watq *)0;
 	}
 	else {
 		if (mode == 0) {
@@ -492,7 +494,7 @@ towatq( int mode,int cusn,int jtim )
 					
 					pwatq->link = q;
 					
-					if (p == (watq *)0;) {
+					if (p == (watq *)0) {
 						watqh = pwatq;
 					}
 					else {
@@ -504,7 +506,7 @@ towatq( int mode,int cusn,int jtim )
 
 			}
 
-			if(	q == (watq *)0)|
+			if(	q == (watq *)0)
 			{
 				watqt->link = pwatq;
 				pwatq->link = (watq *)0;
